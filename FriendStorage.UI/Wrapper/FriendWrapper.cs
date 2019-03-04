@@ -1,5 +1,8 @@
 ﻿using FriendStorage.Model;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace FriendStorage.UI.Wrapper
 {
@@ -8,7 +11,21 @@ namespace FriendStorage.UI.Wrapper
         public FriendWrapper(Friend model) : base(model)
         {
             InitializeComplexProperties(model);
+            InitializeCollectionProperties(model);
         }
+
+        private void InitializeCollectionProperties(Friend model)
+        {
+            if (model.Emails == null)
+            {
+                throw new ArgumentException("Emails cannot be null");
+            }
+            Emails = new ObservableCollection<FriendEmailWrapper>(
+                model.Emails.Select(e => new FriendEmailWrapper(e)));
+            RegisterCollection(Emails, model.Emails);
+        }
+
+       
 
         private void InitializeComplexProperties(Friend model)
         {
@@ -60,5 +77,7 @@ namespace FriendStorage.UI.Wrapper
             get;
             private set;
         }
+
+        public ObservableCollection<FriendEmailWrapper> Emails { get; private set; }
     }
 }

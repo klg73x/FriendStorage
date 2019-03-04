@@ -88,6 +88,7 @@
       <DependentUpon>NavigationView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wrapper\AddressWrapper.cs" />
+    <Compile Include="Wrapper\FriendEmailWrapper.cs" />
     <Compile Include="Wrapper\FriendWrapper.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Page Include="Styles\Brushes.xaml">

@@ -6,6 +6,7 @@ using FriendStorage.UI.DataProvider;
 using FriendStorage.UI.DataProvider.Lookups;
 using FriendStorage.UI.Events;
 using FriendStorage.UI.View.Services;
+using FriendStorage.UI.Wrapper;
 using Microsoft.Practices.Prism.PubSubEvents;
 
 namespace FriendStorage.UI.ViewModel
@@ -13,7 +14,7 @@ namespace FriendStorage.UI.ViewModel
   public interface IFriendEditViewModel
   {
     void Load(int? friendId = null);
-    Friend Friend { get; }
+    FriendWrapper Friend { get; }
   }
   public class FriendEditViewModel : Observable, IFriendEditViewModel
   {
@@ -21,9 +22,9 @@ namespace FriendStorage.UI.ViewModel
     private readonly IMessageDialogService _messageDialogService;
     private readonly IFriendDataProvider _friendDataProvider;
     private readonly ILookupProvider<FriendGroup> _friendGroupLookupProvider;
-    private Friend _friend;
+    private FriendWrapper _friend;
     private IEnumerable<LookupItem> _friendGroups;
-    private FriendEmail _selectedEmail;
+    private FriendEmailWrapper _selectedEmail;
 
     public FriendEditViewModel(IEventAggregator eventAggregator,
         IMessageDialogService messageDialogService,
@@ -47,14 +48,15 @@ namespace FriendStorage.UI.ViewModel
     {
       FriendGroupLookup = _friendGroupLookupProvider.GetLookup();
 
-      Friend = friendId.HasValue
+      var friend = friendId.HasValue
           ? _friendDataProvider.GetFriendById(friendId.Value)
           : new Friend { Address = new Address(), Emails = new List<FriendEmail>() };
 
+      Friend = new FriendWrapper(friend);
       InvalidateCommands();
     }
 
-    public Friend Friend
+    public FriendWrapper Friend
     {
       get { return _friend; }
       set
@@ -74,7 +76,7 @@ namespace FriendStorage.UI.ViewModel
       }
     }
 
-    public FriendEmail SelectedEmail
+    public FriendEmailWrapper SelectedEmail
     {
       get { return _selectedEmail; }
       set
@@ -97,8 +99,8 @@ namespace FriendStorage.UI.ViewModel
 
     private void OnSaveExecute(object obj)
     {
-      _friendDataProvider.SaveFriend(Friend);
-      _eventAggregator.GetEvent<FriendSavedEvent>().Publish(Friend);
+      _friendDataProvider.SaveFriend(Friend.Model);
+      _eventAggregator.GetEvent<FriendSavedEvent>().Publish(Friend.Model);
       InvalidateCommands();
     }
 
@@ -151,7 +153,7 @@ namespace FriendStorage.UI.ViewModel
 
     private void OnAddEmailExecute(object obj)
     {
-      Friend.Emails.Add(new FriendEmail());
+      Friend.Emails.Add(new FriendEmailWrapper(new FriendEmail()));
     }
 
     private void InvalidateCommands()
