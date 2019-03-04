@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wrapper\BasicTests.cs" />
+    <Compile Include="Wrapper\ChangeNotificationComplexProperty.cs" />
     <Compile Include="Wrapper\ChangeNotificationSimpleProperty.cs" />
   </ItemGroup>
   <ItemGroup>

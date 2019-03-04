@@ -48,6 +48,22 @@ namespace FriendStorage.UI.Wrapper.Tests
         }
 
         [TestMethod()]
+        [ExpectedException(typeof(ArgumentException))]
+        public void ShouldThrowArgumentExceptionIfAddressIsNull()
+        {
+            try
+            {
+                _friend.Address = null;
+                var wrapper = new FriendWrapper(_friend);
+            }
+            catch (ArgumentException ex)
+            {
+                Assert.AreEqual("Address cannot be null", ex.Message);
+                throw;
+            }
+        }
+
+        [TestMethod()]
         public void ShouldGetValueOfUnderllyingModelProperty()
         {
             var wrapper = new FriendWrapper(_friend);
