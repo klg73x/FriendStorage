@@ -32,8 +32,9 @@ namespace FriendStorage.UI.Wrapper
                 throw new ArgumentException("Address cannot be null");
             }
             Address = new AddressWrapper(model.Address);
+            RegisterComplex(Address);
         }
-
+       
         public int Id
         {
             get { return GetValue<int>(); }

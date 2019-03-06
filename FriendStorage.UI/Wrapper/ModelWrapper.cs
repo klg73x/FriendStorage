@@ -11,6 +11,8 @@ namespace FriendStorage.UI.Wrapper
     public class ModelWrapper<T> : Observable, IRevertibleChangeTracking
     {
         private Dictionary<string, object> _originalValues;
+        private List<IRevertibleChangeTracking> _trackingObjects;
+
         public ModelWrapper(T model)
         {
             if (model == null)
@@ -19,15 +21,20 @@ namespace FriendStorage.UI.Wrapper
             }
             Model = model;
             _originalValues = new Dictionary<string, object>();
+            _trackingObjects = new List<IRevertibleChangeTracking>();
         }
 
         public T Model { get; private set; }
 
-        public bool IsChanged { get { return _originalValues.Count > 0; } }
+        public bool IsChanged { get { return _originalValues.Count > 0 || _trackingObjects.Any(t => t.IsChanged); } }
 
         public void AcceptChanges()
         {
             _originalValues.Clear();
+            foreach (var trackingObject in _trackingObjects)
+            {
+                trackingObject.AcceptChanges();
+            }
             OnPropertyChanged(""); //This allows the whole view to take the new accepted values rather than iterating through all of what has changed. It is a bit of a cheat.
         }
 
@@ -38,6 +45,10 @@ namespace FriendStorage.UI.Wrapper
                 typeof(T).GetProperty(originalValueEntry.Key).SetValue(Model, originalValueEntry.Value);
             }
             _originalValues.Clear();
+            foreach (var trackingObject in _trackingObjects)
+            {
+                trackingObject.RejectChanges();
+            }
             OnPropertyChanged(""); //Again.. all databindings will now update their values with this
         }
 
@@ -113,6 +124,21 @@ namespace FriendStorage.UI.Wrapper
             };
         }
 
-        
+        protected void RegisterComplex<TModel>(ModelWrapper<TModel> wrapper)
+        {
+            if (!_trackingObjects.Contains(wrapper))
+            {
+                _trackingObjects.Add(wrapper);
+                wrapper.PropertyChanged += TrackingObjectPropertyChanged;
+            }
+        }
+
+        private void TrackingObjectPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+           if(e.PropertyName == nameof(IsChanged))
+            {
+                OnPropertyChanged(nameof(IsChanged));
+            }
+        }
     }
 }
