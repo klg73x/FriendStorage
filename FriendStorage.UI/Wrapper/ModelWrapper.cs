@@ -35,7 +35,7 @@ namespace FriendStorage.UI.Wrapper
             {
                 trackingObject.AcceptChanges();
             }
-            OnPropertyChanged(""); //This allows the whole view to take the new accepted values rather than iterating through all of what has changed. It is a bit of a cheat.
+            OnPropertyChanged(""); //This allows the whole view to take the new accepted values  rather than iterating through all of what has changed. It is a bit of a cheat.
         }
 
         public void RejectChanges()
