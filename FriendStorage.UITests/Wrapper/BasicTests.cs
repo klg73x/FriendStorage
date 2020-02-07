@@ -34,7 +34,7 @@ namespace FriendStorage.UI.Wrapper.Tests
 
         [TestMethod()]
         [ExpectedException(typeof(ArgumentNullException))]
-        public void ShouldThrowArgumentNullExceptionIfModelIsNull()
+        public void ShouldThrowArgumentNullExceptionIfModelIsNull() 
         {
             try
             {
